@@ -10,6 +10,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Karla:wght@500;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
+  <style>
+    #book { max-width: calc(100vw - 120px) !important; }
+  </style>
   <link rel="icon" href="../logo.png" />
 
 <body style="background:transparent;">
@@ -1170,6 +1173,31 @@
         });
 
         pageFlip.loadFromHTML(bookEl.querySelectorAll(".bookpage"));
+
+        function recenterSingle() {
+          if (!pageFlip) { return; }
+          var items = bookEl.querySelectorAll(".stf__item");
+          for (var k = 0; k < items.length; k++) { items[k].style.transform = ""; }
+          if (pageFlip.getRender().getOrientation() === "portrait") { bookEl.style.transform = ""; return; }
+          var n = pageFlip.getPageCount();
+          var i = pageFlip.getCurrentPageIndex();
+          var single = (i === 0) || (i === n - 1 && n % 2 === 0);
+          if (!single) { bookEl.style.transform = "translateX(" + bookShift + "px)"; return; }
+          bookEl.style.transform = "";
+          var page = pageFlip.getPage(i);
+          var el = page.getElement();
+          var r = el.getBoundingClientRect();
+          if (r.width < 2) { bookEl.style.transform = "translateX(" + bookShift + "px)"; return; }
+          var dx = Math.round((window.innerWidth - r.width) / 2 - r.left + bookShift);
+          bookEl.style.transform = "translateX(" + dx + "px)";
+        }
+        var bookShift = 60;
+
+        pageFlip.on("init", function () { setTimeout(recenterSingle, 150); });
+        pageFlip.on("flip", function () { setTimeout(recenterSingle, 120); setTimeout(recenterSingle, 380); });
+        pageFlip.on("changeState", function (e) { if (e.data === "read") { setTimeout(recenterSingle, 80); } });
+        pageFlip.on("changeOrientation", function () { setTimeout(recenterSingle, 150); });
+        window.addEventListener("resize", function () { setTimeout(recenterSingle, 200); });
 
         const total = pageFlip.getPageCount();
         counter.textContent = "Page 1 of " + total;

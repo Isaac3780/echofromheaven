@@ -593,7 +593,7 @@ footer { background: var(--dark); color: rgba(255,255,255,0.8); padding: 70px 22
 .flipbook.flipbook-clear { padding-top: calc(12vh + 30px); }
 .flip-stage { display: flex; justify-content: center; align-items: flex-start; width: 100%; }
 .flip-stage + .day-nav-wrap { margin-top: 34px; }
-#book { margin: 0 auto; }
+#book { margin: 0 auto; max-width: calc(100vw - 120px) !important; }
 
 .bookpage {
   background: #fff; color: var(--text); font-size: 0.85rem; line-height: 1.5;
